@@ -1,0 +1,153 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                   Yahweh Gold US30 Indices Trend Trading Bot                                    |
+//|                                          Developer: Forex Robot Easy Team                                                 |
+//|                                          Website: forexroboteasy.com                                               |
+//+------------------------------------------------------------------+
+
+// Define input parameters
+input double RiskPercentage = 2.0; // Risk percentage per trade
+input double StopLossPercentage = 2.0; // Stop loss percentage from entry price
+input double TakeProfitPercentage = 4.0; // Take profit percentage from entry price
+input int MaxOpenTrades = 5; // Maximum number of open trades
+input int MaxSlippage = 10; // Maximum slippage allowed
+
+// Define global variables
+int totalTrades = 0; // Total number of trades executed
+int currentTrades = 0; // Current number of open trades
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+    // Initialize necessary indicators and data feeds
+
+    return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    // Clean up and release resources
+}
+
+//+------------------------------------------------------------------+
+//| Expert start function                                            |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    // Perform trend detection algorithm to identify potential trading opportunities
+
+    if (IsTrendDetected())
+    {
+        // Execute entry strategy to open a trade in the direction of the trend
+        if (currentTrades < MaxOpenTrades)
+        {
+            ExecuteTrade();
+            currentTrades++;
+            totalTrades++;
+        }
+    }
+
+    // Perform exit strategy to close trades in the direction of the trend if necessary
+    if (currentTrades > 0 && IsExitStrategyMet())
+    {
+        CloseTrades();
+        currentTrades = 0;
+    }
+
+    // Monitor and report bot performance
+    if (totalTrades > 0)
+    {
+        ReportPerformance();
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Function to check if a trend is detected                          |
+//+------------------------------------------------------------------+
+bool IsTrendDetected()
+{
+    // Implement trend detection algorithm here
+    // Return true if a trend is detected, false otherwise
+}
+
+//+------------------------------------------------------------------+
+//| Function to execute a trade in the direction of the trend         |
+//+------------------------------------------------------------------+
+void ExecuteTrade()
+{
+    // Determine appropriate trade size based on position sizing algorithm
+    double lotSize = CalculateLotSize();
+
+    // Calculate stop loss and take profit levels
+    double stopLoss = NormalizeDouble(Ask - (Ask * StopLossPercentage / 100), Digits);
+    double takeProfit = NormalizeDouble(Ask + (Ask * TakeProfitPercentage / 100), Digits);
+
+    // Place the trade
+    if (OrderSend(Symbol(), OP_BUY, lotSize, Ask, MaxSlippage, stopLoss, takeProfit) == -1)
+    {
+        // Handle trade execution error
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Function to calculate appropriate trade size                      |
+//+------------------------------------------------------------------+
+double CalculateLotSize()
+{
+    // Implement position sizing algorithm here
+    // Return the calculated lot size
+}
+
+//+------------------------------------------------------------------+
+//| Function to check if exit strategy conditions are met             |
+//+------------------------------------------------------------------+
+bool IsExitStrategyMet()
+{
+    // Implement exit strategy conditions here
+    // Return true if exit conditions are met, false otherwise
+}
+
+//+------------------------------------------------------------------+
+//| Function to close all open trades                                 |
+//+------------------------------------------------------------------+
+void CloseTrades()
+{
+    for (int i = OrdersTotal() - 1; i >= 0; i--)
+    {
+        if (OrderSelect(i, SELECT_BY_POS, MODE_TRADES))
+        {
+            if (OrderSymbol() == Symbol() && (OrderType() == OP_BUY || OrderType() == OP_SELL))
+            {
+                if (!OrderClose(OrderTicket(), OrderLots(), Bid, MaxSlippage))
+                {
+                    // Handle trade closure error
+                }
+            }
+        }
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Function to report bot performance                                |
+//+------------------------------------------------------------------+
+void ReportPerformance()
+{
+    // Implement performance reporting logic here
+}
+
+//+------------------------------------------------------------------+
+//| Custom functions as per requirements                              |
+//+------------------------------------------------------------------+
+
+// Custom trend detection algorithm
+
+// Custom exit strategy implementation
+
+// Custom position sizing algorithm
+
+// Custom performance reporting logic
